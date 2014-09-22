@@ -50,7 +50,7 @@ def get_services():
 
 def generate_config(services):
     template = env.get_template('haproxy.cfg.tmpl')
-    with open("/etc/haproxy.cfg", "w") as f:
+    with open("/etc/haproxy/haproxy.cfg", "w") as f:
         f.write(template.render(services=services))
 
 if __name__ == "__main__":
