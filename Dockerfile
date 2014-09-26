@@ -22,7 +22,7 @@ ADD . /app
 
 WORKDIR /app
 
-EXPOSE 1936
+# EXPOSE 1936
 
 CMD ["python", "main.py"]
 
