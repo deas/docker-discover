@@ -3,6 +3,7 @@
 import etcd
 # https://docs.python.org/2/library/argparse.html
 # import argparse
+import signal
 import logging
 from jinja2 import Environment, PackageLoader
 import os
@@ -57,6 +58,7 @@ def generate_config(services, cfg):
         f.write(template.render(services=services))
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     logging.basicConfig(level=logging.WARN,# DEBUG - used by other modules ,
                         format='%(asctime)s %(levelname)s %(message)s')
     logger = logging.getLogger(__name__)
