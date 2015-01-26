@@ -4,7 +4,10 @@ global
     pidfile /var/run/haproxy.pid
 
 defaults
-    mode tcp
+#    mode tcp
+#    option tcplog
+    option  httplog
+    mode    http
     timeout connect 5s
     timeout client 1m
     timeout server 1m
@@ -30,6 +33,9 @@ listen stats 127.0.0.1:1936
 
 {% for service in services %}
 listen {{ service }}
+# source ... is tproxy stuff. Needs ip/iptables tweaks
+# server MUST be on docker0 net - NOT loopback
+    source 0.0.0.0 usesrc clientip
     bind *:{{services[service].port}}
     {% for backend in services[service].backends %}
     server {{ backend.name }} {{ backend.addr }} check inter 2s rise 3 fall 2{% endfor %}
