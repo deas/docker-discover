@@ -29,14 +29,14 @@ listen stats 127.0.0.1:1936
     stats hide-version
     # stats realm Haproxy\ Statistics
     stats uri /
-    # stats auth Username:Password
+    # stats auth {{ stats_auth }}
 
 {% for service in services %}
 listen {{ service }}
 # source ... is tproxy stuff. Needs ip/iptables tweaks
 # server MUST be on docker0 net - NOT loopback
     source 0.0.0.0 usesrc clientip
-    bind *:{{services[service].port}}
+    bind {{ service_ip }}:{{services[service].port}}
     {% for backend in services[service].backends %}
     server {{ backend.name }} {{ backend.addr }} check inter 2s rise 3 fall 2{% endfor %}
 {% endfor %}
