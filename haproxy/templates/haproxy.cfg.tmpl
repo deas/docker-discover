@@ -1,9 +1,12 @@
 global
+    log /dev/log    local0
+    log /dev/log    local1 notice
     daemon
     maxconn 4096
     pidfile /var/run/haproxy.pid
 
 defaults
+    log global
 #    mode tcp
 #    option tcplog
     option  httplog

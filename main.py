@@ -1,8 +1,7 @@
 #!/usr/bin/python
-# TODO: Get rid of shell script call
-# Get template passed in
-# Get service (ip) to listen to passed in
-# Get stats address to listen to passed in
+# TODO: Get template passed in
+# TODO: Get service (ip) to listen to passed in
+# TODO: Get stats address to listen to passed in
 #
 import etcd
 # https://docs.python.org/2/library/argparse.html
