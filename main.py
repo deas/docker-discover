@@ -58,6 +58,9 @@ def get_etcd_addr():
 def get_services(service_map):
 
     host, port = get_etcd_addr()
+    # /etcdctl --endpoint http://localhost:4001 ls keys ->  404
+    # tcpdump -i any -A -s 0 port 4001
+    # http://127.0.0.1:4001/v2/keys/?recursive=true
     client = etcd.Client(host=host, port=int(port))
     backends = client.read('/services', recursive = True)
     # backends = client.read('/backends', recursive = True)
@@ -69,9 +72,25 @@ def get_services(service_map):
             continue
 
         ignore, service, container = i.key[1:].split("/")
+        # container_port = container.split(":")[2]
         #  <hostname>:<container-name>:<internal-port>[:udp if udp]
         # "/services/crwp/bruce:desperate_pare:80"
-        if service in service_map:
+        #
+        #{
+        #   "key": "/services/contentreich-web",
+        #    "dir": true,
+        #    "nodes": [{
+        #        "key": "/services/contentreich-web/bruce:contentreich-web1.service:80",
+        #        "value": "172.17.0.7:80",
+        #        "modifiedIndex": 3,
+        #        "createdIndex": 3
+        #    }],
+        #    "modifiedIndex": 3,
+        #    "createdIndex": 3
+        #}
+
+        # logger.info(service_map[service])
+        if service in service_map:# and service_map[service] == container_port:
             endpoints = services.setdefault(service, dict(port="", backends=[]))
             endpoints["port"] = service_map[service]
             # if container == "port":
@@ -101,7 +120,7 @@ if __name__ == "__main__":
     # os.environ['ETCD_HOST'] = 'localhost:4001'# Test
     # os.environ['RELOAD_CMD'] = '/bin/true'
     # os.environ['HAPROXY_CFG'] = './haproxy.cfg'
-    # os.environ['SERVICE_NAMES'] = 'cr-wordpress:80'# image:port which port in container ? :80'
+    # os.environ['SERVICE_NAMES'] = 'contentreich-web:80'# image:port which port in container ? :80'
     etcd_host = os.environ["ETCD_HOST"] if "ETCD_HOST" in os.environ else False
     # reload_cmd  = [ os.environ['RELOAD_CMD'] ] if 'RELOAD_CMD' in os.environ else ["./reload-haproxy.sh"]
     service_ip = os.environ['SERVICE_IP'] if 'SERVICE_IP' in os.environ else  "0.0.0.0"
